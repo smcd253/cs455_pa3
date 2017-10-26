@@ -107,8 +107,8 @@ public class MazeComponent extends JComponent
         // drawPath(g2);
         // -------------------- BUG -----------------
         // use simple draw method as backup
-        if (this.maze.getAlreadySolved())
-          drawPathSimple(g2);
+        if (this.maze.search())
+          drawPath(g2);
       }
     }
   }
@@ -170,13 +170,13 @@ public class MazeComponent extends JComponent
    * --> does not properly draw line at corners or in
    * @param g2 must be initialized by (Graphics2D)g
    */
+
   private void drawPath(Graphics2D g2)
   {
     // path variables
     LinkedList<MazeCoord> path = null;
     Iterator<MazeCoord> iterator = null;
     MazeCoord pathLoc = null;
-    MazeCoord prevPathLoc = null;
     MazeCoord nextPathLoc = null;
 
     // if search() returns true, initialize path variables
@@ -187,7 +187,6 @@ public class MazeComponent extends JComponent
       if (iterator.hasNext())
       {
         pathLoc = iterator.next();
-        prevPathLoc = pathLoc;
         nextPathLoc = iterator.next();
       }   
       
@@ -195,175 +194,225 @@ public class MazeComponent extends JComponent
       // loop through path
       while(iterator.hasNext())
       {
-        // loop through entire maze for every path location
-        for (int i = 0; i < this.maze.numRows(); i++)
+        if (this.maze.mazeVal(pathLoc.getRow(), pathLoc.getCol()) == 4
+            && this.maze.mazeVal(nextPathLoc.getRow(), nextPathLoc.getCol()) == 4)
         {
-          for (int j = 0; j < this.maze.numCols(); j++)
-          {
-            MazeCoord location = new MazeCoord(i,j);
-
-            // System.out.print("location = " + location.toString() + " : ");
-            // System.out.println("pathLoc = " + pathLoc.toString());
-
-             // if we are at a path location, draw a line based on the conditions outlined below
-            if (location.getCol() == pathLoc.getCol()
-                && location.getRow() == pathLoc.getRow())
-            {
-              // Rectangle lineBeta = new Rectangle(this.START_Y + (j * this.BOX_HEIGHT) + 9,
-              //                                   this.START_X + (i * this.BOX_WIDTH) + 9, 
-              //                                   this.BOX_HEIGHT - 18, 
-              //                                   this.BOX_WIDTH - 18);
-              
-              // if at entry point
-              if (pathLoc.equals(this.maze.getEntryLoc()))
-              {
-                // half line right
-                if (pathLoc.getCol() == nextPathLoc.getCol() - 1)
-                {
-                  g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
-                              this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2, 
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH);
-                }
-                // half line left
-                else if (pathLoc.getCol() == nextPathLoc.getCol() + 1)
-                {
-                  g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
-                              this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
-                              this.START_X + (i * this.BOX_WIDTH) - this.BOX_WIDTH);                
-                }
-                // half line down
-                else if (pathLoc.getRow() == nextPathLoc.getRow() - 1)
-                {
-                  g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
-                              this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT,
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2);  
-                }
-                // half line up
-                else if (pathLoc.getRow() == nextPathLoc.getRow() + 1)
-                {
-                  g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
-                              this.START_Y + (j * this.BOX_HEIGHT) - this.BOX_HEIGHT,
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2);  
-                }
-                // error case
-                else
-                  System.out.println("Error in Entry Loc Path Printing");
-              }
-              // if at exit point
-              else if (pathLoc == this.maze.getExitLoc())
-              {
-                // half line right
-                if (pathLoc.getCol() == prevPathLoc.getCol() - 1)
-                {
-                  g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
-                              this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2, 
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH);
-                }
-                // half line left
-                else if (pathLoc.getCol() == prevPathLoc.getCol() + 1)
-                {
-                  g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
-                              this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
-                              this.START_X + (i * this.BOX_WIDTH) - this.BOX_WIDTH);                
-                }
-                // half line down
-                else if (pathLoc.getRow() == prevPathLoc.getRow() - 1)
-                {
-                  g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
-                              this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT,
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2);  
-                }
-                // half line up
-                else if (pathLoc.getRow() == prevPathLoc.getRow() + 1)
-                {
-                  g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
-                              this.START_Y + (j * this.BOX_HEIGHT) - this.BOX_HEIGHT,
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2);  
-                }
-                // error case
-                else
-                  System.out.println("Error in Exit Loc Path Printing");
-              }
-              else // all path locations between entry and exit
-              {
-                // full vertical line
-                if (pathLoc.getRow() == prevPathLoc.getRow() + 1
-                    && pathLoc.getRow() == nextPathLoc.getRow() - 1)
-                {
-                  g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
-                              this.START_X + (i * this.BOX_WIDTH),
-                              this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH);
-                }
-                // full horizontal line
-                else if (pathLoc.getCol() == prevPathLoc.getCol() + 1
-                        && pathLoc.getCol() == nextPathLoc.getCol() - 1)              
-                {
-                  g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT),
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
-                              this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT,
-                              this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2);
-                  
-                } 
-                // top right hand corner
-                else if (pathLoc.getCol() == prevPathLoc.getCol() + 1
-                        && pathLoc.getRow() == nextPathLoc.getRow() + 1)
-                {
-                  System.out.println("Found corner");
-                }
-                // top left hand corner
-                else if (pathLoc.getRow() == prevPathLoc.getRow() + 1
-                        && pathLoc.getCol() == nextPathLoc.getCol() - 1)
-                {
-                 System.out.println("Found corner");
-                  
-                }
-                // bottom right hand corner
-                else if (pathLoc.getCol() == prevPathLoc.getCol() + 1
-                        && pathLoc.getRow() == nextPathLoc.getRow() - 1)
-                {
-                  System.out.println("Found corner");
-                  
-                }
-                // bottom left hand corner
-                else if (pathLoc.getRow() == prevPathLoc.getRow() + 1
-                && pathLoc.getCol() == nextPathLoc.getCol() - 1)
-                {
-                  System.out.println("Found corner");
-                  
-                }
-                // error case
-                else
-                  System.out.println("Error in Mid-Path Printing");
-                
-              }                     
-              
-              //g2.draw(lineBeta);
-              g2.setColor(Color.BLUE);
-              //g2.fill(lineBeta);
-              
-              // update pathLoc vars
-              prevPathLoc = pathLoc;
-              pathLoc = nextPathLoc;
-              // iterate iterator and store back into local var pathLoc
-              if (iterator.hasNext())
-                nextPathLoc = new MazeCoord(iterator.next());
-              
-              System.out.println(prevPathLoc.toString() + pathLoc.toString() + nextPathLoc.toString());
-            }
-          }
-        }
+          g2.drawLine(this.START_Y + (pathLoc.getCol() * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
+                      this.START_X + (pathLoc.getRow() * this.BOX_WIDTH) + this.BOX_WIDTH/2,
+                      this.START_Y + (nextPathLoc.getCol() * this.BOX_HEIGHT) + this.BOX_HEIGHT/2, 
+                      this.START_X + (nextPathLoc.getRow() * this.BOX_WIDTH) + this.BOX_WIDTH/2);
+          g2.setColor(Color.BLUE);
+        }  
+        
+        
+        // update pathLoc vars
+        pathLoc = nextPathLoc;
+        // iterate iterator and store back into local var pathLoc
+        if (iterator.hasNext())
+          nextPathLoc = new MazeCoord(iterator.next());           
+        
       }
     }
   }
 }
+  // private void drawPath(Graphics2D g2)
+  // {
+  //   // path variables
+  //   LinkedList<MazeCoord> path = null;
+  //   Iterator<MazeCoord> iterator = null;
+  //   MazeCoord pathLoc = null;
+  //   MazeCoord prevPathLoc = null;
+  //   MazeCoord nextPathLoc = null;
+
+  //   // if search() returns true, initialize path variables
+  //   if (/*this.maze.search()*/ true)
+  //   {
+  //     path = this.maze.getPath();
+  //     iterator = path.iterator();
+  //     if (iterator.hasNext())
+  //     {
+  //       pathLoc = iterator.next();
+  //       prevPathLoc = pathLoc;
+  //       nextPathLoc = iterator.next();
+  //     }   
+      
+  //     // ---------- draw path elements -----------
+  //     // loop through path
+  //     while(iterator.hasNext())
+  //     {
+  //       // loop through entire maze for every path location
+  //       for (int i = 0; i < this.maze.numRows(); i++)
+  //       {
+  //         for (int j = 0; j < this.maze.numCols(); j++)
+  //         {
+  //           MazeCoord location = new MazeCoord(i,j);
+
+  //           // System.out.print("location = " + location.toString() + " : ");
+  //           // System.out.println("pathLoc = " + pathLoc.toString());
+
+  //            // if we are at a path location, draw a line based on the conditions outlined below
+  //           if (location.getCol() == pathLoc.getCol()
+  //               && location.getRow() == pathLoc.getRow())
+  //           {
+  //             // Rectangle lineBeta = new Rectangle(this.START_Y + (j * this.BOX_HEIGHT) + 9,
+  //             //                                   this.START_X + (i * this.BOX_WIDTH) + 9, 
+  //             //                                   this.BOX_HEIGHT - 18, 
+  //             //                                   this.BOX_WIDTH - 18);
+              
+  //             g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
+  //             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
+  //             this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2, 
+  //             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH);
+  //             // if at entry point
+  //             if (pathLoc.equals(this.maze.getEntryLoc()))
+  //             {
+  //               // half line right
+  //               if (pathLoc.getCol() == nextPathLoc.getCol() - 1)
+  //               {
+  //                 g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
+  //                             this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2, 
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH);
+  //               }
+  //               // half line left
+  //               else if (pathLoc.getCol() == nextPathLoc.getCol() + 1)
+  //               {
+  //                 g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
+  //                             this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
+  //                             this.START_X + (i * this.BOX_WIDTH) - this.BOX_WIDTH);                
+  //               }
+  //               // half line down
+  //               else if (pathLoc.getRow() == nextPathLoc.getRow() - 1)
+  //               {
+  //                 g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
+  //                             this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT,
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2);  
+  //               }
+  //               // half line up
+  //               else if (pathLoc.getRow() == nextPathLoc.getRow() + 1)
+  //               {
+  //                 g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
+  //                             this.START_Y + (j * this.BOX_HEIGHT) - this.BOX_HEIGHT,
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2);  
+  //               }
+  //               // error case
+  //               else
+  //                 System.out.println("Error in Entry Loc Path Printing");
+  //             }
+  //             // if at exit point
+  //             else if (pathLoc == this.maze.getExitLoc())
+  //             {
+  //               // half line right
+  //               if (pathLoc.getCol() == prevPathLoc.getCol() - 1)
+  //               {
+  //                 g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
+  //                             this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2, 
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH);
+  //               }
+  //               // half line left
+  //               else if (pathLoc.getCol() == prevPathLoc.getCol() + 1)
+  //               {
+  //                 g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
+  //                             this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
+  //                             this.START_X + (i * this.BOX_WIDTH) - this.BOX_WIDTH);                
+  //               }
+  //               // half line down
+  //               else if (pathLoc.getRow() == prevPathLoc.getRow() - 1)
+  //               {
+  //                 g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
+  //                             this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT,
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2);  
+  //               }
+  //               // half line up
+  //               else if (pathLoc.getRow() == prevPathLoc.getRow() + 1)
+  //               {
+  //                 g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
+  //                             this.START_Y + (j * this.BOX_HEIGHT) - this.BOX_HEIGHT,
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2);  
+  //               }
+  //               // error case
+  //               else
+  //                 System.out.println("Error in Exit Loc Path Printing");
+  //             }
+  //             else // all path locations between entry and exit
+  //             {
+  //               // full vertical line
+  //               if (pathLoc.getRow() == prevPathLoc.getRow() + 1
+  //                   && pathLoc.getRow() == nextPathLoc.getRow() - 1)
+  //               {
+  //                 g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
+  //                             this.START_X + (i * this.BOX_WIDTH),
+  //                             this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT/2,
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH);
+  //               }
+  //               // full horizontal line
+  //               else if (pathLoc.getCol() == prevPathLoc.getCol() + 1
+  //                       && pathLoc.getCol() == nextPathLoc.getCol() - 1)              
+  //               {
+  //                 g2.drawLine(this.START_Y + (j * this.BOX_HEIGHT),
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2,
+  //                             this.START_Y + (j * this.BOX_HEIGHT) + this.BOX_HEIGHT,
+  //                             this.START_X + (i * this.BOX_WIDTH) + this.BOX_WIDTH/2);
+                  
+  //               } 
+  //               // top right hand corner
+  //               else if (pathLoc.getCol() == prevPathLoc.getCol() + 1
+  //                       && pathLoc.getRow() == nextPathLoc.getRow() + 1)
+  //               {
+  //                 System.out.println("Found corner");
+  //               }
+  //               // top left hand corner
+  //               else if (pathLoc.getRow() == prevPathLoc.getRow() + 1
+  //                       && pathLoc.getCol() == nextPathLoc.getCol() - 1)
+  //               {
+  //                System.out.println("Found corner");
+                  
+  //               }
+  //               // bottom right hand corner
+  //               else if (pathLoc.getCol() == prevPathLoc.getCol() + 1
+  //                       && pathLoc.getRow() == nextPathLoc.getRow() - 1)
+  //               {
+  //                 System.out.println("Found corner");
+                  
+  //               }
+  //               // bottom left hand corner
+  //               else if (pathLoc.getRow() == prevPathLoc.getRow() + 1
+  //               && pathLoc.getCol() == nextPathLoc.getCol() - 1)
+  //               {
+  //                 System.out.println("Found corner");
+                  
+  //               }
+  //               // error case
+  //               else
+  //                 System.out.println("Error in Mid-Path Printing");
+                
+  //             }                     
+              
+  //             //g2.draw(lineBeta);
+  //             g2.setColor(Color.BLUE);
+  //             //g2.fill(lineBeta);
+              
+  //             // update pathLoc vars
+  //             prevPathLoc = pathLoc;
+  //             pathLoc = nextPathLoc;
+  //             // iterate iterator and store back into local var pathLoc
+  //             if (iterator.hasNext())
+  //               nextPathLoc = new MazeCoord(iterator.next());
+              
+  //             System.out.println(prevPathLoc.toString() + pathLoc.toString() + nextPathLoc.toString());
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
 
 

@@ -49,9 +49,9 @@ public class Maze {
   // path is singly linked list
   private LinkedList<MazeCoord> path = new LinkedList<MazeCoord>();
 
-  // member variable to represent if maze has already been solved
-  // needs public accessor so MazeComponent doesn't call search before key press
+  // member variables to represent if maze has already been solved
   private boolean alreadySolved = false;
+  private boolean mazeSolved = false;
 
    /**
       Constructs a maze.
@@ -61,8 +61,8 @@ public class Maze {
       @param exitLoc the "exit" location of the maze (not necessarily on an edge)
       PRE: 0 <= startLoc.getRow() < mazeData.length and 0 <= startLoc.getCol() < mazeData[0].length
          and 0 <= endLoc.getRow() < mazeData.length and 0 <= endLoc.getCol() < mazeData[0].length
-
     */
+
   public Maze(boolean[][] mazeData, MazeCoord startLoc, MazeCoord exitLoc) {
     numRows = mazeData.length;
     numCols = mazeData[0].length;
@@ -159,16 +159,6 @@ public class Maze {
    }
 
    /**
-    * Find out if search() was already called and if it was sucsessful
-    * prevents MazeComponent from calling search() prematurely
-    * @return whether search() was already performed
-    */
-    public boolean getAlreadySolved()
-    {
-      return this.alreadySolved;
-    }
-
-   /**
       Find a path from start location to the exit location (see Maze
       constructor parameters, startLoc and exitLoc) if there is one.
       Client can access the path found via getPath method.
@@ -206,7 +196,11 @@ public class Maze {
           // ------------------ smallest case -----------------------
 
           if (row == this.exitLoc.getRow() && col == this.exitLoc.getCol())
-              done = true;  // maze is solved
+          {
+            done = true;  
+            mazeSolved = true; // maze is solved
+          }
+              
           else 
           { // search 4 locations around this location (can't go diagonally)
             done = solveMaze(row + 1, col);  // search down
@@ -220,6 +214,7 @@ public class Maze {
            if (done)
            {  
             path.addLast(location);
+            this.myMaze[row][col] = 4;
            }  
         }
       }
@@ -242,5 +237,10 @@ public class Maze {
         mazeString += "\n";
       }
       return mazeString;
+    }
+
+    public int mazeVal(int row, int col)
+    {
+      return this.myMaze[row][col];
     }
 }
