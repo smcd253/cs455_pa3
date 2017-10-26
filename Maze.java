@@ -1,5 +1,5 @@
-// Name:
-// USC loginid:
+// Name: Spencer McDonough
+// USC loginid: 6341617166
 // CS 455 PA3
 // Fall 2017
 
@@ -38,9 +38,8 @@ public class Maze {
    * maze in int form to detect cycles in search()
    * 0 = FREE
    * 1 = WALL
-   * 2 = VISITED
-   * 3 = STARTLOC
-   * 4 = ENDLOC
+   * 3 = VISITED
+   * 4 = path
    */
   private int[][] myMaze = null;
   private int numRows = 0;
@@ -199,6 +198,12 @@ public class Maze {
         if (this.myMaze[row][col] == 0)
         {
           this.myMaze[row][col] = 3;  // cell has been tried
+
+          // ------------------ smallest case -----------------------
+          if (this.myMaze.length == 1 && this.myMaze[row].length == 1)
+            return true;
+          // ------------------ smallest case -----------------------
+
           if (row == this.exitLoc.getRow() && col == this.exitLoc.getCol())
               done = true;  // maze is solved
           else 
@@ -218,11 +223,11 @@ public class Maze {
            }  
         }
       }
-      
       return done;
     }
    /**
     * toString() methodS to test constructor and accessors
+    @return formatted maze size and maze
     */
     public String toString()
     {
@@ -237,31 +242,5 @@ public class Maze {
         mazeString += "\n";
       }
       return mazeString;
-    }
-
-    // test getPath()
-    public void buildTestPath()
-    {
-     testPath.addLast(new MazeCoord(2,4));
-     testPath.addLast(new MazeCoord(1,4));
-     testPath.addLast(new MazeCoord(0,4));
-     testPath.addLast(new MazeCoord(0,5));
-     testPath.addLast(new MazeCoord(0,6));
-     testPath.addLast(new MazeCoord(0,7));
-     testPath.addLast(new MazeCoord(1,7));
-     testPath.addLast(new MazeCoord(2,7));
-     testPath.addLast(new MazeCoord(3,7));
-     testPath.addLast(new MazeCoord(4,7));
-     testPath.addLast(new MazeCoord(4,6));
-     testPath.addLast(new MazeCoord(4,5));
-     testPath.addLast(new MazeCoord(4,4));
-     testPath.addLast(new MazeCoord(4,3));
-     testPath.addLast(new MazeCoord(4,2));
-     testPath.addLast(new MazeCoord(4,1));
-     testPath.addLast(new MazeCoord(3,1));
-     testPath.addLast(new MazeCoord(2,1));
-     testPath.addLast(new MazeCoord(1,1));
-     testPath.addLast(new MazeCoord(0,1));
-     testPath.addLast(new MazeCoord(0,0)); 
     }
 }

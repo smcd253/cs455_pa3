@@ -1,5 +1,5 @@
-// Name:
-// USC loginid:
+// Name: Spencer McDonough
+// USC loginid: 6341617166
 // CS 455 PA3
 // Fall 2017
 
@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
-
 import javax.swing.JFrame;
 
 
@@ -133,8 +132,8 @@ public class MazeViewer {
         //     System.out.println("endPoint: " + endPoint.getRow() + ", " + endPoint.getCol());
         // // ------------------- TEST THAT WE GRABBED RIGHT VALUES ------------
 
+        // construct mazeData boolean array after retrieving input
         mazeData = new boolean[numRows][numCols];
-
         for (int i = 0; i < numRows; i++)
         {
             for (int j = 0; j < numCols; j++)

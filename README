@@ -1,5 +1,5 @@
-Name: 
-USC loginid:
+Name: Spencer McDonough
+USC loginid: 6341617166
 CSCI 455 PA3
 Fall 2017
 
@@ -15,6 +15,7 @@ other students in the course."
 
 Initial below to "sign" the above statement:
 
+SHM
 
 ----------------------------------------------
 ACKNOWLEDGE ANY OUTSIDE SOURCES
@@ -31,13 +32,21 @@ i.e., the contents of the starter files for the assignment]
 ----------------------------------------------
 KNOWN BUGS or LIMITATIONS:
 
+in:MazeComponent.java
+    public void drawPath() does not work as intended
+        * BUG: was not able to achieve mutual exclusivity on all draw conditions
+        * --> does not properly draw line at corners or in
 
+    solution: use simpler drawPathSimple() method that draws path using boxes
+
+case-by-case limitations:
+    bigMaze: solver doubles back on self making the path longer than necessary
+    upperLeftMaze: solver doubles back on self making the path longer than necessary
 
 ----------------------------------------------
 ANY OTHER NOTES FOR THE GRADER:
 
-
-
+aesthetic issue: jframe prints random lines on boarder for some cases (padding error?)
 
 
 

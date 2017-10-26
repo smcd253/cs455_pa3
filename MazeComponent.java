@@ -1,5 +1,5 @@
-// Name:
-// USC loginid:
+// Name: Spencer McDonough
+// USC loginid: 6341617166
 // CS 455 PA3
 // Fall 2017
 
@@ -165,6 +165,7 @@ public class MazeComponent extends JComponent
       }
     }
   }
+
   /**
    * Returns nothing, draws a continuous line from entryLoc to exitLoc
    * BUG: was not able to achieve mutual exclusivity on all draw conditions
