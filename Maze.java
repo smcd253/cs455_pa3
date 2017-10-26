@@ -39,6 +39,7 @@ public class Maze {
    * 0 = FREE
    * 1 = WALL
    * 3 = VISITED
+   * 4 = PART OF PATH
    */
   private int[][] myMaze = null;
   private int numRows = 0;

@@ -33,12 +33,8 @@ http://info.ils.indiana.edu/~katy/teaching/Examples/Maze_Search.java
 ----------------------------------------------
 KNOWN BUGS or LIMITATIONS:
 
-in:MazeComponent.java
-    public void drawPath() does not work as intended
-        * BUG: was not able to achieve mutual exclusivity on all draw conditions
-        * --> does not properly draw line at corners or in
-
-    solution: use simpler drawPathSimple() method that draws path using boxes
+in: MazeComponent.java
+    drawPath(g2) changes color of path over entry and exit locations
 
 case-by-case limitations:
     bigMaze: solver doubles back on self making the path longer than necessary
