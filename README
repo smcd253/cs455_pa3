@@ -27,7 +27,8 @@ and what sections of the textbook are involved (if applicable): [you do
 not need to list any of the code that we wrote for the assignment,
 i.e., the contents of the starter files for the assignment]
 
-
+Maze Search Algorithm Reference:
+http://info.ils.indiana.edu/~katy/teaching/Examples/Maze_Search.java
 
 ----------------------------------------------
 KNOWN BUGS or LIMITATIONS:
@@ -45,8 +46,3 @@ case-by-case limitations:
 
 ----------------------------------------------
 ANY OTHER NOTES FOR THE GRADER:
-
-aesthetic issue: jframe prints random lines on boarder for some cases (padding error?)
-
-
-

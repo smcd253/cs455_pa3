@@ -39,18 +39,18 @@ public class Maze {
    * 0 = FREE
    * 1 = WALL
    * 3 = VISITED
-   * 4 = path
    */
   private int[][] myMaze = null;
   private int numRows = 0;
   private int numCols = 0;
-
   private MazeCoord startLoc = null;
   private MazeCoord exitLoc = null;
   
-  private LinkedList<MazeCoord> testPath = new LinkedList<MazeCoord>();
+  // path is singly linked list
   private LinkedList<MazeCoord> path = new LinkedList<MazeCoord>();
 
+  // member variable to represent if maze has already been solved
+  // needs public accessor so MazeComponent doesn't call search before key press
   private boolean alreadySolved = false;
 
    /**
@@ -160,6 +160,7 @@ public class Maze {
 
    /**
     * Find out if search() was already called and if it was sucsessful
+    * prevents MazeComponent from calling search() prematurely
     * @return whether search() was already performed
     */
     public boolean getAlreadySolved()
@@ -179,7 +180,7 @@ public class Maze {
       {
         alreadySolved = solveMaze(this.startLoc.getRow(), this.startLoc.getCol());
       }
-      return alreadySolved; // DUMMY CODE TO GET IT TO COMPILE
+      return alreadySolved; 
    }
 
    /**
@@ -208,18 +209,17 @@ public class Maze {
               done = true;  // maze is solved
           else 
           { // search 4 locations around this location (can't go diagonally)
-            done = solveMaze (row + 1, col);  // down
+            done = solveMaze(row + 1, col);  // search down
             if (!done)
-                done = solveMaze (row, col + 1);  // right
+                done = solveMaze(row, col + 1);  // search right
             if (!done)
-                done = solveMaze (row - 1, col);  // up
+                done = solveMaze(row - 1, col);  // search up
             if (!done)
-                done = solveMaze (row, col - 1);  // left
+                done = solveMaze(row, col - 1);  // search left
           }
            if (done)
            {  
             path.addLast(location);
-            this.myMaze[row][col] = 4;// change values at all locations of the final path (4 = part of path)
            }  
         }
       }

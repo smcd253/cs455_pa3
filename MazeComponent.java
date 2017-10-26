@@ -55,12 +55,11 @@ public class MazeComponent extends JComponent
         Rectangle box = new Rectangle(this.START_Y + (j * this.BOX_HEIGHT),
                                       this.START_X + (i * this.BOX_WIDTH), 
                                       this.BOX_HEIGHT, this.BOX_WIDTH);
-        // draw box
-        g2.draw(box);
 
         // create new mazecoord at this location
         MazeCoord location = new MazeCoord(i, j);
         
+        // set colors based on 1/0 at location
         if (this.maze.hasWallAt(location))
         {
           g2.setColor(Color.BLACK);       
@@ -69,6 +68,8 @@ public class MazeComponent extends JComponent
         {
           g2.setColor(Color.WHITE);            
         } 
+        // draw box
+        g2.draw(box);
         g2.fill(box);
         
         /**
@@ -83,8 +84,8 @@ public class MazeComponent extends JComponent
                                             this.BOX_HEIGHT - this.INSET, 
                                             this.BOX_WIDTH - this.INSET); 
 
-          g2.draw(entryBox);
           g2.setColor(Color.YELLOW);
+          g2.draw(entryBox);
           g2.fill(entryBox);          
         }
 
@@ -96,13 +97,16 @@ public class MazeComponent extends JComponent
                                             this.START_X + (i * this.BOX_WIDTH) + this.INSET/2, 
                                             this.BOX_HEIGHT - this.INSET, 
                                             this.BOX_WIDTH - this.INSET);                                    
-          g2.draw(exitBox);
           g2.setColor(Color.GREEN);
+          g2.draw(exitBox);
           g2.fill(exitBox);          
         }
 
         // draw path
+        // -------------------- BUG -----------------
         // drawPath(g2);
+        // -------------------- BUG -----------------
+        // use simple draw method as backup
         if (this.maze.getAlreadySolved())
           drawPathSimple(g2);
       }
@@ -130,19 +134,13 @@ public class MazeComponent extends JComponent
     // ---------- draw path elements -----------
     // loop through path
     while(iterator.hasNext())
-    {
-      //debug
-      //System.out.println("pathLoc = " + pathLoc.toString());     
-
+    {   
       // loop through entire maze for every path location
       for (int i = 0; i < this.maze.numRows(); i++)
       {
         for (int j = 0; j < this.maze.numCols(); j++)
         {
           MazeCoord location = new MazeCoord(i,j);
-
-          // System.out.print("location = " + location.toString() + " : ");
-          // System.out.println("pathLoc = " + pathLoc.toString());
 
             // if we are at a path location, draw a line based on the conditions outlined below
           if (location.getCol() == pathLoc.getCol()
@@ -153,8 +151,8 @@ public class MazeComponent extends JComponent
                                               this.BOX_HEIGHT - 18, 
                                               this.BOX_WIDTH - 18);                          
             
-            g2.draw(lineBeta);
             g2.setColor(Color.BLUE);
+            g2.draw(lineBeta);
             g2.fill(lineBeta);
             
             // iterate iterator and store back into local var pathLoc
